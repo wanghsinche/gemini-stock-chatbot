@@ -1,10 +1,4 @@
-import {
-  ModelMessage,
-  CoreToolMessage,
-  generateId,
-  UIMessage,
-  ToolInvocation,
-} from "ai";
+import { generateId, UIMessage } from "ai";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -51,88 +45,27 @@ export function generateUUID(): string {
   });
 }
 
-function addToolMessageToChat({
-  toolMessage,
-  messages,
-}: {
-  toolMessage: CoreToolMessage;
-  messages: Array<UIMessage>;
-}): Array<UIMessage> {
-  return messages.map((message) => {
-    if (message.toolInvocations) {
-      return {
-        ...message,
-        toolInvocations: message.toolInvocations.map((toolInvocation) => {
-          const toolResult = toolMessage.content.find(
-            (tool) => tool.toolCallId === toolInvocation.toolCallId,
-          );
-
-          if (toolResult) {
-            return {
-              ...toolInvocation,
-              state: "result",
-              result: toolResult.result,
-            };
-          }
-
-          return toolInvocation;
-        }),
-      };
-    }
-
-    return message;
-  });
-}
-
-export function convertToUIMessages(
-  messages: Array<ModelMessage>,
-): Array<UIMessage> {
-  return messages.reduce((chatMessages: Array<UIMessage>, message) => {
-    if (message.role === "tool") {
-      return addToolMessageToChat({
-        toolMessage: message as CoreToolMessage,
-        messages: chatMessages,
-      });
-    }
-
-    let textContent = "";
-    let toolInvocations: Array<ToolInvocation> = [];
-
-    if (typeof message.content === "string") {
-      textContent = message.content;
-    } else if (Array.isArray(message.content)) {
-      for (const content of message.content) {
-        if (content.type === "text") {
-          textContent += content.text;
-        } else if (content.type === "tool-call") {
-          toolInvocations.push({
-            state: "call",
-            toolCallId: content.toolCallId,
-            toolName: content.toolName,
-            args: content.args,
-          });
-        }
-      }
-    }
-
-    chatMessages.push({
-      id: generateId(),
-      role: message.role,
-      content: textContent,
-      toolInvocations,
-    });
-
-    return chatMessages;
-  }, []);
-}
+// No longer needed - use validateUIMessages and convertToModelMessages from AI SDK instead
 
 export function getTitleFromChat(chat: Chat) {
-  const messages = convertToUIMessages(chat.messages as Array<ModelMessage>);
-  const firstMessage = messages[0];
-
+  // Get first message text for chat title
+  const firstMessage = chat.messages[0] as any;
+  
   if (!firstMessage) {
     return "Untitled";
   }
 
-  return firstMessage.content;
+  // Handle both content and parts properties
+  const messageParts = firstMessage.content || firstMessage.parts || [];
+  if (Array.isArray(messageParts)) {
+    const textPart = messageParts.find((part: any) => part.type === 'text');
+    return textPart?.text || 'Untitled';
+  }
+
+  // Fallback for string content
+  if (typeof firstMessage.content === 'string') {
+    return firstMessage.content.substring(0, 50) || 'Untitled';
+  }
+
+  return 'Untitled';
 }

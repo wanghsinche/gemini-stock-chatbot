@@ -1,6 +1,5 @@
 "use client";
 
-import { UIMessage } from "ai";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -8,24 +7,18 @@ import { BotIcon, UserIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
-import { AuthorizePayment } from "../flights/authorize-payment";
-import { DisplayBoardingPass } from "../flights/boarding-pass";
-import { CreateReservation } from "../flights/create-reservation";
-import { FlightStatus } from "../flights/flight-status";
-import { ListFlights } from "../flights/list-flights";
-import { SelectSeats } from "../flights/select-seats";
-import { VerifyPayment } from "../flights/verify-payment";
 
-// File attachment type for AI SDK 5.0
-type FileAttachment = {
+// File attachment type for AI SDK 5.0 - matches file parts structure
+export type FileAttachment = {
+  type: 'file';
   url: string;
   name: string;
-  contentType: string;
+  mediaType: string;
 };
 
-// Tool invocation type for AI SDK 5.0
-type ToolInvocation = {
-  type: string;
+// Tool invocation type for AI SDK 5.0 - use proper UIMessage parts
+export type ToolInvocation = {
+  type: `tool-${string}`;
   toolCallId: string;
   toolName: string;
   state: 'input-available' | 'output-available' | 'output-error';
@@ -74,22 +67,6 @@ export const Message = ({
                   <div key={toolCallId}>
                     {toolName === "getWeather" ? (
                       <Weather weatherAtLocation={toolInvocation.output} />
-                    ) : toolName === "displayFlightStatus" ? (
-                      <FlightStatus flightStatus={toolInvocation.output} />
-                    ) : toolName === "searchFlights" ? (
-                      <ListFlights chatId={chatId} results={toolInvocation.output} />
-                    ) : toolName === "selectSeats" ? (
-                      <SelectSeats chatId={chatId} availability={toolInvocation.output} />
-                    ) : toolName === "createReservation" ? (
-                      Object.keys(toolInvocation.output).includes("error") ? null : (
-                        <CreateReservation reservation={toolInvocation.output} />
-                      )
-                    ) : toolName === "authorizePayment" ? (
-                      <AuthorizePayment intent={toolInvocation.output} />
-                    ) : toolName === "displayBoardingPass" ? (
-                      <DisplayBoardingPass boardingPass={toolInvocation.output} />
-                    ) : toolName === "verifyPayment" ? (
-                      <VerifyPayment result={toolInvocation.output} />
                     ) : (
                       <div>{JSON.stringify(toolInvocation.output, null, 2)}</div>
                     )}
@@ -106,19 +83,7 @@ export const Message = ({
                   <div key={toolCallId} className="skeleton">
                     {toolName === "getWeather" ? (
                       <Weather />
-                    ) : toolName === "displayFlightStatus" ? (
-                      <FlightStatus />
-                    ) : toolName === "searchFlights" ? (
-                      <ListFlights chatId={chatId} />
-                    ) : toolName === "selectSeats" ? (
-                      <SelectSeats chatId={chatId} />
-                    ) : toolName === "createReservation" ? (
-                      <CreateReservation />
-                    ) : toolName === "authorizePayment" ? (
-                      <AuthorizePayment />
-                    ) : toolName === "displayBoardingPass" ? (
-                      <DisplayBoardingPass />
-                    ) : null}
+                    ) : 'LOADING'}
                   </div>
                 );
               }
