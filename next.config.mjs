@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
+import { config } from "dotenv";
+import fs from 'fs';
+
+if (fs.existsSync('.env.local')) {
+  config({ path: ".env.local" });
+}
+
 const nextConfig = {
   experimental: {
     serverActions: {

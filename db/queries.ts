@@ -4,13 +4,9 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { config } from "dotenv";
-
 import { user, chat, User, reservation } from "./schema";
 
-config({
-  path: ".env.local",
-});
+
 
 
 // Optionally, if not using email/pass login, you can
