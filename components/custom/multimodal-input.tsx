@@ -1,6 +1,6 @@
 "use client";
 
-import { Attachment, ChatRequestOptions, CreateMessage, Message } from "ai";
+import { ChatRequestOptions, UIMessage } from "ai";
 import { motion } from "framer-motion";
 import React, {
   useRef,
@@ -18,6 +18,13 @@ import { PreviewAttachment } from "./preview-attachment";
 import useWindowSize from "./use-window-size";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+
+// File attachment type for AI SDK 5.0
+type FileAttachment = {
+  url: string;
+  name: string;
+  contentType: string;
+};
 
 const suggestedActions = [
   {
@@ -47,11 +54,11 @@ export function MultimodalInput({
   setInput: (value: string) => void;
   isLoading: boolean;
   stop: () => void;
-  attachments: Array<Attachment>;
-  setAttachments: Dispatch<SetStateAction<Array<Attachment>>>;
-  messages: Array<Message>;
+  attachments: Array<FileAttachment>;
+  setAttachments: Dispatch<SetStateAction<Array<FileAttachment>>>;
+  messages: Array<UIMessage>;
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   handleSubmit: (
@@ -86,8 +93,22 @@ export function MultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    handleSubmit(undefined, {
-      experimental_attachments: attachments,
+    // Create the message parts array
+    const messageParts = [
+      ...(input.trim() ? [{ type: 'text' as const, text: input }] : []),
+      ...attachments.map((attachment) => ({
+        type: 'file' as const,
+        url: attachment.url,
+        name: attachment.name,
+        mediaType: attachment.contentType,
+      })),
+    ];
+
+    // Submit message with parts directly
+    append({
+      id: `user-${Date.now()}`,
+      role: "user",
+      parts: messageParts,
     });
 
     setAttachments([]);
@@ -95,7 +116,7 @@ export function MultimodalInput({
     if (width && width > 768) {
       textareaRef.current?.focus();
     }
-  }, [attachments, handleSubmit, setAttachments, width]);
+  }, [attachments, setAttachments, width, input, append]);
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -169,8 +190,9 @@ export function MultimodalInput({
                 <button
                   onClick={async () => {
                     append({
+                      id: `suggested-${Date.now()}`,
                       role: "user",
-                      content: suggestedAction.action,
+                      parts: [{ type: "text" as const, text: suggestedAction.action }],
                     });
                   }}
                   className="border-none bg-muted/50 w-full text-left border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 rounded-lg p-3 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex flex-col"

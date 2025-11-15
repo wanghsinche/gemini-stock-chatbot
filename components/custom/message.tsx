@@ -1,6 +1,6 @@
 "use client";
 
-import { Attachment, ToolInvocation } from "ai";
+import { UIMessage } from "ai";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -16,6 +16,24 @@ import { ListFlights } from "../flights/list-flights";
 import { SelectSeats } from "../flights/select-seats";
 import { VerifyPayment } from "../flights/verify-payment";
 
+// File attachment type for AI SDK 5.0
+type FileAttachment = {
+  url: string;
+  name: string;
+  contentType: string;
+};
+
+// Tool invocation type for AI SDK 5.0
+type ToolInvocation = {
+  type: string;
+  toolCallId: string;
+  toolName: string;
+  state: 'input-available' | 'output-available' | 'output-error';
+  input?: any;
+  output?: any;
+  errorText?: string;
+};
+
 export const Message = ({
   chatId,
   role,
@@ -26,8 +44,8 @@ export const Message = ({
   chatId: string;
   role: string;
   content: string | ReactNode;
-  toolInvocations: Array<ToolInvocation> | undefined;
-  attachments?: Array<Attachment>;
+  toolInvocations?: Array<ToolInvocation>;
+  attachments?: Array<FileAttachment>;
 }) => {
   return (
     <motion.div
@@ -51,32 +69,36 @@ export const Message = ({
             {toolInvocations.map((toolInvocation) => {
               const { toolName, toolCallId, state } = toolInvocation;
 
-              if (state === "result") {
-                const { result } = toolInvocation;
-
+              if (state === "output-available" && toolInvocation.output) {
                 return (
                   <div key={toolCallId}>
                     {toolName === "getWeather" ? (
-                      <Weather weatherAtLocation={result} />
+                      <Weather weatherAtLocation={toolInvocation.output} />
                     ) : toolName === "displayFlightStatus" ? (
-                      <FlightStatus flightStatus={result} />
+                      <FlightStatus flightStatus={toolInvocation.output} />
                     ) : toolName === "searchFlights" ? (
-                      <ListFlights chatId={chatId} results={result} />
+                      <ListFlights chatId={chatId} results={toolInvocation.output} />
                     ) : toolName === "selectSeats" ? (
-                      <SelectSeats chatId={chatId} availability={result} />
+                      <SelectSeats chatId={chatId} availability={toolInvocation.output} />
                     ) : toolName === "createReservation" ? (
-                      Object.keys(result).includes("error") ? null : (
-                        <CreateReservation reservation={result} />
+                      Object.keys(toolInvocation.output).includes("error") ? null : (
+                        <CreateReservation reservation={toolInvocation.output} />
                       )
                     ) : toolName === "authorizePayment" ? (
-                      <AuthorizePayment intent={result} />
+                      <AuthorizePayment intent={toolInvocation.output} />
                     ) : toolName === "displayBoardingPass" ? (
-                      <DisplayBoardingPass boardingPass={result} />
+                      <DisplayBoardingPass boardingPass={toolInvocation.output} />
                     ) : toolName === "verifyPayment" ? (
-                      <VerifyPayment result={result} />
+                      <VerifyPayment result={toolInvocation.output} />
                     ) : (
-                      <div>{JSON.stringify(result, null, 2)}</div>
+                      <div>{JSON.stringify(toolInvocation.output, null, 2)}</div>
                     )}
+                  </div>
+                );
+              } else if (state === "output-error" && toolInvocation.errorText) {
+                return (
+                  <div key={toolCallId} className="text-red-500">
+                    Error: {toolInvocation.errorText}
                   </div>
                 );
               } else {
