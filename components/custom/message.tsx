@@ -8,37 +8,26 @@ import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 
-// File attachment type for AI SDK 5.0 - matches file parts structure
-export type FileAttachment = {
-  type: 'file';
-  url: string;
-  name: string;
-  mediaType: string;
-};
-
-// Tool invocation type for AI SDK 5.0 - use proper UIMessage parts
-export type ToolInvocation = {
-  type: `tool-${string}`;
-  toolCallId: string;
-  toolName: string;
-  state: 'input-available' | 'output-available' | 'output-error';
-  input?: any;
-  output?: any;
-  errorText?: string;
-};
+// AI SDK 5.0 message part types based on UIMessagePart
+export type MessagePart =
+  | { type: 'text'; text: string; state?: 'streaming' | 'done'; providerMetadata?: any }
+  | { type: 'reasoning'; text: string; state?: 'streaming' | 'done'; providerMetadata?: any }
+  | { type: `tool-${string}`; toolCallId: string; toolName: string; state: 'input-streaming' | 'input-available' | 'output-available' | 'output-error'; input?: any; output?: any; errorText?: string; providerExecuted?: boolean; providerMetadata?: any }
+  | { type: 'dynamic-tool'; toolCallId: string; toolName: string; state: 'input-streaming' | 'input-available' | 'output-available' | 'output-error'; input?: any; output?: any; errorText?: string; providerExecuted?: boolean; providerMetadata?: any; title?: string }
+  | { type: 'source-url'; sourceId: string; url: string; title?: string; providerMetadata?: any }
+  | { type: 'source-document'; sourceId: string; mediaType: string; title: string; filename?: string; providerMetadata?: any }
+  | { type: 'file'; url: string; mediaType: string; filename?: string; providerMetadata?: any }
+  | { type: `data-${string}`; id?: string; data: any }
+  | { type: 'step-start' };
 
 export const Message = ({
   chatId,
   role,
-  content,
-  toolInvocations,
-  attachments,
+  parts,
 }: {
   chatId: string;
   role: string;
-  content: string | ReactNode;
-  toolInvocations?: Array<ToolInvocation>;
-  attachments?: Array<FileAttachment>;
+  parts: Array<MessagePart>;
 }) => {
   return (
     <motion.div
@@ -51,53 +40,135 @@ export const Message = ({
       </div>
 
       <div className="flex flex-col gap-2 w-full">
-        {content && typeof content === "string" && (
-          <div className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
-            <Markdown>{content}</Markdown>
-          </div>
-        )}
-
-        {toolInvocations && (
-          <div className="flex flex-col gap-4">
-            {toolInvocations.map((toolInvocation) => {
-              const { toolName, toolCallId, state } = toolInvocation;
-
-              if (state === "output-available" && toolInvocation.output) {
-                return (
-                  <div key={toolCallId}>
-                    {toolName === "getWeather" ? (
-                      <Weather weatherAtLocation={toolInvocation.output} />
-                    ) : (
-                      <div>{JSON.stringify(toolInvocation.output, null, 2)}</div>
-                    )}
+        {parts.map((part, index) => {
+          switch (part.type) {
+            case 'text':
+              return (
+                <div key={index} className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
+                  <Markdown>{part.text}</Markdown>
+                </div>
+              );
+            
+            case 'reasoning':
+              return (
+                <div key={index} className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">
+                    Reasoning
                   </div>
-                );
-              } else if (state === "output-error" && toolInvocation.errorText) {
-                return (
-                  <div key={toolCallId} className="text-red-500">
-                    Error: {toolInvocation.errorText}
+                  <div className="text-zinc-700 dark:text-zinc-300 italic">
+                    <Markdown>{part.text}</Markdown>
                   </div>
-                );
-              } else {
+                </div>
+              );
+            
+            case 'step-start':
+              return <div key={index} className="border-t border-zinc-200 dark:border-zinc-700 my-4" />;
+            
+            case 'file':
+              return (
+                <div key={index} className="flex flex-row gap-2">
+                  <PreviewAttachment
+                    attachment={{
+                      type: 'file',
+                      url: part.url,
+                      name: part.filename || 'File',
+                      mediaType: part.mediaType
+                    }}
+                  />
+                </div>
+              );
+            
+            case 'source-url':
+              return (
+                <div key={index} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-3 border border-zinc-200 dark:border-zinc-700">
+                  <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Source
+                  </div>
+                  <a
+                    href={part.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:underline text-sm break-all"
+                  >
+                    {part.title || part.url}
+                  </a>
+                </div>
+              );
+            
+            case 'source-document':
+              return (
+                <div key={index} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-3 border border-zinc-200 dark:border-zinc-700">
+                  <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Document
+                  </div>
+                  <div className="text-zinc-800 dark:text-zinc-200 text-sm">
+                    {part.title} <span className="text-zinc-500 dark:text-zinc-400">({part.mediaType})</span>
+                  </div>
+                </div>
+              );
+            
+            case 'dynamic-tool':
+            default:
+              // Handle tool invocations (both dynamic-tool and tool-{name} types)
+              if (part.type.startsWith('tool-') || part.type === 'dynamic-tool') {
+                const toolPart = part as any;
+                const { toolName, toolCallId, state } = toolPart;
+
+                if (state === "output-available" && toolPart.output) {
+                  return (
+                    <div key={toolCallId} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
+                      <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">
+                        Tool: {toolName}
+                      </div>
+                      {toolName === "getWeather" ? (
+                        <Weather weatherAtLocation={toolPart.output} />
+                      ) : (
+                        <pre className="text-sm text-zinc-800 dark:text-zinc-200 overflow-x-auto whitespace-pre-wrap break-words">
+                          {JSON.stringify(toolPart.output, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  );
+                } else if (state === "output-error" && toolPart.errorText) {
+                  return (
+                    <div key={toolCallId} className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                      <div className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
+                        Tool Error: {toolName}
+                      </div>
+                      <div className="text-red-700 dark:text-red-300 text-sm">
+                        {toolPart.errorText}
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={toolCallId} className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700 animate-pulse">
+                      <div className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
+                        Executing: {toolName}
+                      </div>
+                      <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4"></div>
+                    </div>
+                  );
+                }
+              }
+              
+              // Handle data parts
+              if (part.type.startsWith('data-')) {
                 return (
-                  <div key={toolCallId} className="skeleton">
-                    {toolName === "getWeather" ? (
-                      <Weather />
-                    ) : 'LOADING'}
+                  <div key={index} className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                    <div className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
+                      Data: {part.type.replace('data-', '')}
+                    </div>
+                    <pre className="text-sm text-zinc-700 dark:text-zinc-300 overflow-x-auto whitespace-pre-wrap break-words">
+                      {JSON.stringify((part as any).data, null, 2)}
+                    </pre>
                   </div>
                 );
               }
-            })}
-          </div>
-        )}
-
-        {attachments && (
-          <div className="flex flex-row gap-2">
-            {attachments.map((attachment) => (
-              <PreviewAttachment key={attachment.url} attachment={attachment} />
-            ))}
-          </div>
-        )}
+              
+              return null;
+          }
+        })}
       </div>
     </motion.div>
   );

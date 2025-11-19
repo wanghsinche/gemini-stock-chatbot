@@ -4,38 +4,66 @@ import { useChat } from '@ai-sdk/react';
 import { UIMessage } from "ai";
 import { useState } from "react";
 
-import { Message as PreviewMessage, ToolInvocation } from "@/components/custom/message";
+import { Message as PreviewMessage, MessagePart } from "@/components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
 
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 
-// Helper to extract text content from UIMessage - handle both content and parts
-function extractTextFromMessage(message: UIMessage): string {
-  // Handle messages with content property (from database)
-  if ('content' in message && Array.isArray(message.content)) {
-    const textParts = message.content.filter(part => part.type === 'text');
-    return textParts.map(part => part.text).join('') || '';
+// Helper to convert UIMessage parts to MessagePart format
+function convertMessageParts(message: UIMessage): MessagePart[] {
+  // Handle messages with parts property (AI SDK format)
+  if (message.parts) {
+    return message.parts.map(part => {
+      // Handle different part types and convert to our MessagePart format
+      switch (part.type) {
+        case 'text':
+        case 'reasoning':
+        case 'step-start':
+        case 'file':
+        case 'source-url':
+        case 'source-document':
+          return part as MessagePart;
+        
+        case 'dynamic-tool':
+          return part as MessagePart;
+        
+        default:
+          // Handle tool-{name} parts
+          if (part.type.startsWith('tool-')) {
+            return part as MessagePart;
+          }
+          
+          // Handle data-{name} parts
+          if (part.type.startsWith('data-')) {
+            return {
+              type: part.type as `data-${string}`,
+              id: (part as any).id,
+              data: (part as any).data
+            } as MessagePart;
+          }
+          
+          return part as MessagePart;
+      }
+    });
   }
   
-  // Handle messages with parts property (AI SDK format)
-  const textParts = message.parts?.filter(part => part.type === 'text') || [];
-  return textParts.map(part => part.text).join('') || '';
-}
-
-// Helper to extract tool invocations - handle both content and parts
-function extractToolInvocationsFromMessage(message: UIMessage): ToolInvocation[] {
-  // Handle messages with content property (from database)
+  // Handle legacy messages with content property (from database)
   if ('content' in message && Array.isArray(message.content)) {
-    return message.content.filter((part): part is any =>
-      part.type.startsWith('tool-')
-    ) as ToolInvocation[] || [];
+    return message.content.map(part => {
+      if (part.type === 'text') {
+        return {
+          type: 'text' as const,
+          text: part.text
+        } as MessagePart;
+      }
+      // Handle other legacy content types if needed
+      return part as MessagePart;
+    });
   }
   
-  // Handle messages with parts property (AI SDK format)
-  return message.parts?.filter((part): part is any =>
-    part.type.startsWith('tool-')
-  ) as ToolInvocation[] || [];
+  // Fallback for messages without parts or content
+  return [];
 }
 
 export function Chat({
@@ -73,9 +101,7 @@ export function Chat({
               key={message.id}
               chatId={id}
               role={message.role}
-              content={extractTextFromMessage(message)}
-              attachments={[]}
-              toolInvocations={extractToolInvocationsFromMessage(message)}
+              parts={convertMessageParts(message)}
             />
           ))}
 
