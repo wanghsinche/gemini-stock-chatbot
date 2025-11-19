@@ -1,10 +1,10 @@
 <a href="https://chat.vercel.ai/">
   <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Next.js Gemini Chatbot</h1>
+  <h1 align="center">Next.js Stock AI</h1>
 </a>
 
 <p align="center">
-  An Open-Source AI Chatbot Template Built With Next.js and the AI SDK by Vercel.
+  An One-Key-Deploy Open-Source Stock AI Agent Template Built With Next.js and the AI SDK.
 </p>
 
 <p align="center">
@@ -32,10 +32,14 @@
   - [Vercel Blob](https://vercel.com/storage/blob) for efficient object storage
 - [NextAuth.js](https://github.com/nextauthjs/next-auth)
   - Simple and secure authentication
+- [PlusE Finance MCP](https://plusefin.com)
+  - Powerful finance datasource for LLM
+- [Tavily MCP](https://www.tavily.com)
+  - Connect Your Agent to the Web
 
 ## Model Providers
 
-This template ships with Google Gemini `gemini-1.5-pro` models as the default. However, with the [AI SDK](https://sdk.vercel.ai/docs), you can switch LLM providers to [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://sdk.vercel.ai/providers/ai-sdk-providers) with just a few lines of code.
+This template ships with Google Gemini `gemini-2.5-pro` models as the default. However, with the [AI SDK](https://sdk.vercel.ai/docs), you can switch LLM providers to [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://sdk.vercel.ai/providers/ai-sdk-providers) with just a few lines of code.
 
 ## Deploy Your Own
 

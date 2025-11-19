@@ -16,17 +16,21 @@ import { Textarea } from "../ui/textarea";
 
 const suggestedActions = [
   {
-    title: "Help me book a flight",
-    label: "from San Francisco to London",
-    action: "Help me book a flight from San Francisco to London",
+    title: "How is the market",
+    label: "today?",
+    action: "How is the market today? Analyze current market conditions, trends, and key indicators.",
   },
   {
-    title: "What is the status",
-    label: "of flight BA142 flying tmrw?",
-    action: "What is the status of flight BA142 flying tmrw?",
+    title: "Should I invest in Tesla?",
+    label: "Use valuation models and recent news",
+    action: "Should I invest in Tesla? Please analyze using valuation models and recent news without referring to others' opinions.",
+  },
+  {
+    title: "What is the current price",
+    label: "of Nvidia stock?",
+    action: "What is the current price of Nvidia stock?",
   },
 ];
-
 export function MultimodalInput({
   input,
   setInput,

@@ -96,14 +96,21 @@ export function Chat({
         >
           {messages.length === 0 && <Overview />}
 
-          {messages.map((message) => (
-            <PreviewMessage
-              key={message.id}
-              chatId={id}
-              role={message.role}
-              parts={convertMessageParts(message)}
-            />
-          ))}
+          {messages.map((message, index) => {
+            // Check if this is the last message and we're currently streaming
+            const isLastMessage = index === messages.length - 1;
+            const isLoading = status === 'streaming' && isLastMessage && message.role === 'assistant';
+            
+            return (
+              <PreviewMessage
+                key={message.id}
+                chatId={id}
+                role={message.role}
+                parts={convertMessageParts(message)}
+                isLoading={isLoading}
+              />
+            );
+          })}
 
           <div
             ref={messagesEndRef}

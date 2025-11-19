@@ -7,6 +7,7 @@ import { BotIcon, UserIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
+import { ToolInvocationRenderer } from "./tool-invocation-renderer";
 
 // AI SDK 5.0 message part types based on UIMessagePart
 export type MessagePart =
@@ -24,10 +25,12 @@ export const Message = ({
   chatId,
   role,
   parts,
+  isLoading = false,
 }: {
   chatId: string;
   role: string;
   parts: Array<MessagePart>;
+  isLoading?: boolean;
 }) => {
   return (
     <motion.div
@@ -110,46 +113,25 @@ export const Message = ({
             case 'dynamic-tool':
             default:
               // Handle tool invocations (both dynamic-tool and tool-{name} types)
+              // Handle tool invocations with modular components
               if (part.type.startsWith('tool-') || part.type === 'dynamic-tool') {
                 const toolPart = part as any;
                 const { toolName, toolCallId, state } = toolPart;
 
-                if (state === "output-available" && toolPart.output) {
-                  return (
-                    <div key={toolCallId} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-                      <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">
-                        Tool: {toolName}
-                      </div>
-                      {toolName === "getWeather" ? (
-                        <Weather weatherAtLocation={toolPart.output} />
-                      ) : (
-                        <pre className="text-sm text-zinc-800 dark:text-zinc-200 overflow-x-auto whitespace-pre-wrap break-words">
-                          {JSON.stringify(toolPart.output, null, 2)}
-                        </pre>
-                      )}
-                    </div>
-                  );
-                } else if (state === "output-error" && toolPart.errorText) {
-                  return (
-                    <div key={toolCallId} className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                      <div className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-                        Tool Error: {toolName}
-                      </div>
-                      <div className="text-red-700 dark:text-red-300 text-sm">
-                        {toolPart.errorText}
-                      </div>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div key={toolCallId} className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700 animate-pulse">
-                      <div className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">
-                        Executing: {toolName}
-                      </div>
-                      <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4"></div>
-                    </div>
-                  );
-                }
+                const realToolName = part.type === 'dynamic-tool' ? toolPart.toolName : part.type.replace('tool-', '');
+
+                return (
+                  <ToolInvocationRenderer
+                    key={toolCallId}
+                    toolName={realToolName}
+                    toolCallId={toolCallId}
+                    state={state}
+                    input={toolPart.input}
+                    output={toolPart.output}
+                    errorText={toolPart.errorText}
+                    providerExecuted={toolPart.providerExecuted}
+                  />
+                );
               }
               
               // Handle data parts
@@ -169,6 +151,18 @@ export const Message = ({
               return null;
           }
         })}
+        
+        {/* Show loading indicator if message is still being streamed */}
+        {isLoading && role === 'assistant' && (
+          <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-sm mt-2">
+            <div className="animate-pulse flex space-x-1">
+              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            </div>
+            <span>Thinking...</span>
+          </div>
+        )}
       </div>
     </motion.div>
   );

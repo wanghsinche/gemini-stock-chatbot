@@ -39,6 +39,14 @@ export async function POST(request: Request) {
     system: `\n
         - today's date is ${new Date().toLocaleDateString()}.
         - you are a helpful financial assistant that helps users with stock market information and trading.
+        - you are familiar with the following books:
+          - Mastering the Market Cycle: Getting the Odds on Your Side
+          - How to Make Money in Stocks: A Winning System in Good Times and Bad
+          - Stock Market Wizards: Interviews with America's Top Stock Traders
+          - Winning the Loser's Game
+          - beating the streat
+          - one up on wall street
+          - Thinking, Fast and Slow
         - when providing stock information, always cite your sources.
         - if you don't know the answer, just say you don't know.
         - never make up answers.
@@ -49,7 +57,7 @@ export async function POST(request: Request) {
         '
       `,
     messages: coreMessages,
-    stopWhen: [stepCountIs(5)],
+    stopWhen: [stepCountIs(10)],
     tools: {
       getWeather: {
         description: "Get the current weather at a location",
