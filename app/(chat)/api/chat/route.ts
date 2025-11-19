@@ -1,4 +1,4 @@
-import { convertToModelMessages, UIMessage, streamText, validateUIMessages } from "ai";
+import { convertToModelMessages, UIMessage, streamText, validateUIMessages, stepCountIs } from "ai";
 import { z } from 'zod/v4';
 
 import { geminiFlashModel } from "@/ai";
@@ -8,6 +8,7 @@ import {
   getChatById,
   saveChat,
 } from "@/db/queries";
+import { getMCPTools, closeMCPClient } from "@/ai/mcp-tools";
 
 export async function POST(request: Request) {
   const { id, messages }: { id: string; messages: Array<UIMessage> } =
@@ -18,6 +19,9 @@ export async function POST(request: Request) {
   if (!session || !session.user) {
     return new Response("Unauthorized", { status: 401 });
   }
+
+  // Get MCP tools from the server
+  const mcpTools = await getMCPTools();
 
   // Validate messages to ensure they match the expected format
   const validatedMessages = await validateUIMessages({
@@ -34,11 +38,18 @@ export async function POST(request: Request) {
     model: geminiFlashModel,
     system: `\n
         - today's date is ${new Date().toLocaleDateString()}.
-        - ask follow up questions to nudge user into the optimal flow
+        - you are a helpful financial assistant that helps users with stock market information and trading.
+        - when providing stock information, always cite your sources.
+        - if you don't know the answer, just say you don't know.
+        - never make up answers.
+        - be concise and to the point.
+        - always think step by step before answering.
+        - use the tools provided to get accurate and up-to-date information.
         - ask for any details you don't know, etc.'
         '
       `,
     messages: coreMessages,
+    stopWhen: [stepCountIs(5)],
     tools: {
       getWeather: {
         description: "Get the current weather at a location",
@@ -46,7 +57,7 @@ export async function POST(request: Request) {
           latitude: z.number().describe("Latitude coordinate"),
           longitude: z.number().describe("Longitude coordinate"),
         }),
-        execute: async ({ latitude, longitude }) => {
+        execute: async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
           const response = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
           );
@@ -55,6 +66,8 @@ export async function POST(request: Request) {
           return weatherData;
         },
       },
+      // Include MCP tools from the server
+      ...mcpTools,
     },
     experimental_telemetry: {
       isEnabled: true,
@@ -65,7 +78,10 @@ export async function POST(request: Request) {
   return result.toUIMessageStreamResponse({
     originalMessages: validatedMessages,
     onFinish: async ({ messages }) => {
-      try {        
+      try {
+        
+        // Close MCP client after chat is complete
+        await closeMCPClient();
         await saveChat({
           id,
           messages,
@@ -75,7 +91,6 @@ export async function POST(request: Request) {
         console.error('Failed to save chat:', error);
       }
     },
-
   });
 }
 

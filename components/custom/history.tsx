@@ -58,8 +58,9 @@ export const History = ({ user }: { user: User | undefined }) => {
   });
 
   useEffect(() => {
+    if (!isHistoryVisible) return;
     mutate();
-  }, [pathname, mutate]);
+  }, [pathname, mutate, isHistoryVisible]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -150,7 +151,7 @@ export const History = ({ user }: { user: User | undefined }) => {
                   <div>No chats found</div>
                 </div>
               ) : null}
-
+              
               {isLoading && user ? (
                 <div className="flex flex-col">
                   {[44, 32, 28, 52].map((item) => (
