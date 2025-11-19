@@ -16,34 +16,19 @@ import { Textarea } from "../ui/textarea";
 
 const suggestedActions = [
   {
-    title: "Analyze market cycle",
-    label: "current phase and opportunities",
-    action: "Analyze the current market cycle phase using Mastering the Market Cycle principles. What are the key indicators suggesting and where are the best opportunities now?",
+    title: "Analyze overall market",
+    label: "current conditions and trends",
+    action: "Analyze current market conditions using Mastering the Market Cycle principles. What phase are we in, what are the key indicators showing, and where are the best opportunities right now?",
   },
   {
-    title: "Build a winning portfolio",
-    label: "using CAN SLIM methodology",
-    action: "Help me build a winning portfolio using the CAN SLIM methodology from 'How to Make Money in Stocks'. What stocks currently meet the criteria and what's the optimal allocation?",
+    title: "Deep dive Tesla analysis",
+    label: "TSLA valuation and investment thesis",
+    action: "Provide a comprehensive analysis of Tesla (TSLA) including valuation models, recent developments, competitive position, and investment thesis. Should I buy, hold, or sell based on current price and fundamentals?",
   },
   {
-    title: "Value vs Growth",
-    label: "which strategy works now?",
-    action: "Based on current market conditions, should I focus on value or growth investing? Analyze using Warren Buffett's principles and provide specific stock examples with entry points.",
-  },
-  {
-    title: "Market sentiment analysis",
-    label: "fear vs greed index",
-    action: "Analyze current market sentiment using fear vs greed indicators. What does this tell us about potential market moves and how should I position my portfolio?",
-  },
-  {
-    title: "Dollar-cost averaging",
-    label: "best candidates for DCA",
-    action: "Identify the best stocks for dollar-cost averaging right now. Consider blue-chip companies with strong fundamentals that are trading at reasonable valuations.",
-  },
-  {
-    title: "Risk management",
-    label: "position sizing and stop losses",
-    action: "Help me implement proper risk management for my portfolio. How should I determine position sizes and set stop losses based on current market volatility?",
+    title: "Compare top stocks",
+    label: "AAPL vs NVDA vs MSFT analysis",
+    action: "Compare Apple (AAPL), NVIDIA (NVDA), and Microsoft (MSFT) across valuation metrics, growth prospects, and technical indicators. Which offers the best risk-adjusted return potential right now?",
   },
 ];
 export function MultimodalInput({
