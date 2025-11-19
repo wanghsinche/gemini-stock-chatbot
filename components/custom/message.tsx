@@ -6,8 +6,8 @@ import { ReactNode } from "react";
 import { BotIcon, UserIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
-import { Weather } from "./weather";
 import { ToolInvocationRenderer } from "./tool-invocation-renderer";
+import { Weather } from "./weather";
 
 // AI SDK 5.0 message part types based on UIMessagePart
 export type MessagePart =
@@ -156,9 +156,9 @@ export const Message = ({
         {isLoading && role === 'assistant' && (
           <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-sm mt-2">
             <div className="animate-pulse flex space-x-1">
-              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-2 h-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
             <span>Thinking...</span>
           </div>

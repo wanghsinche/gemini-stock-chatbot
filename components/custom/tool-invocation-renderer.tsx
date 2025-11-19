@@ -1,7 +1,7 @@
 "use client";
 
-import { Weather } from "./weather";
 import { DynamicToolOutput, DynamicToolError } from "./dynamic-tool-output";
+import { Weather } from "./weather";
 
 interface ToolInvocationRendererProps {
   toolName: string;

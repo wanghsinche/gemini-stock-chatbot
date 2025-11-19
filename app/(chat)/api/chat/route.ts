@@ -2,13 +2,13 @@ import { convertToModelMessages, UIMessage, streamText, validateUIMessages, step
 import { z } from 'zod/v4';
 
 import { geminiFlashModel } from "@/ai";
+import { getMCPTools, closeMCPClient } from "@/ai/mcp-tools";
 import { auth } from "@/app/(auth)/auth";
 import {
   deleteChatById,
   getChatById,
   saveChat,
 } from "@/db/queries";
-import { getMCPTools, closeMCPClient } from "@/ai/mcp-tools";
 
 export async function POST(request: Request) {
   const { id, messages }: { id: string; messages: Array<UIMessage> } =

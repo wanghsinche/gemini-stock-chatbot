@@ -20,12 +20,12 @@ export const Overview = () => {
         </p>
         <p>
           Welcome to your AI Investment Advisor powered by Google Gemini. This intelligent assistant
-          combines legendary investment wisdom from books like "Mastering the Market Cycle," "How to Make Money in Stocks,"
-          and "One Up on Wall Street" with real-time market data and advanced analytics.
+          combines legendary investment wisdom from books like Mastering the Market Cycle, How to Make Money in Stocks,
+          and One Up on Wall Street with real-time market data and advanced analytics.
         </p>
         <p>
           Ask me about market analysis, portfolio construction, stock valuation, risk management,
-          or any investment strategy. I'll provide actionable insights using proven methodologies
+          or any investment strategy. I&apos;ll provide actionable insights using proven methodologies
           and current market data to help you make informed investment decisions.
         </p>
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
