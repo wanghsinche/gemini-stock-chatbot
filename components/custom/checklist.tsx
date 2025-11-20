@@ -41,15 +41,6 @@ export function Checklist({
     })
     .filter(Boolean);
 
-  const toggleItem = (index: number) => {
-    const newCheckedItems = new Set(checkedItems);
-    if (newCheckedItems.has(index)) {
-      newCheckedItems.delete(index);
-    } else {
-      newCheckedItems.add(index);
-    }
-    setCheckedItems(newCheckedItems);
-  };
 
   const completedCount = Array.from(checkedItems).length;
   const totalCount = items.length;
@@ -96,7 +87,6 @@ export function Checklist({
               "bg-white dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800",
               "hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
             )}
-            onClick={() => toggleItem(index)}
           >
             <div className={cx(
               "size-5 rounded border-2 flex items-center justify-center transition-all duration-200",

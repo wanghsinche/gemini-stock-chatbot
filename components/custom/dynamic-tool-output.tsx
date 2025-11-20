@@ -132,13 +132,14 @@ export function DynamicToolOutput({ toolName, output, state }: DynamicToolOutput
         </button>
       </div>
 
-      {isExpanded && (
-        <div className="bg-zinc-50 dark:bg-zinc-950 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700">
+        <div className={cx("bg-zinc-50 dark:bg-zinc-950 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700", {
+          "hidden": !isExpanded,
+          "block": isExpanded
+        })}>
           <pre className="text-sm text-zinc-700 dark:text-zinc-300 overflow-y-auto max-h-40 whitespace-pre-wrap break-words font-mono">
             {JSON.stringify(output, null, 2)}
           </pre>
         </div>
-      )}
     </div>
   );
 }
