@@ -116,7 +116,7 @@ export function DynamicToolOutput({
             <div className={cx("text-sm font-medium", colors.titleText)}>
               Tool Result
             </div>
-            <div className={cx("text-xl font-semibold", colors.headerText)}>
+            <div className={cx("text-lg font-semibold", colors.headerText)}>
               {toolName}
             </div>
           </div>
@@ -141,7 +141,7 @@ export function DynamicToolOutput({
           }
         )}
       >
-        <pre className="text-sm text-foreground/80 overflow-y-auto max-h-60 whitespace-pre-wrap break-words font-mono">
+        <pre className="text-xs text-foreground/80 overflow-y-auto max-h-60 whitespace-pre-wrap break-words font-mono">
           {JSON.stringify(output, null, 2)}
         </pre>
       </div>
