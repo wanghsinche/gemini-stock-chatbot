@@ -1,6 +1,7 @@
 "use client";
 
 import cx from "classnames";
+import { useState } from "react";
 
 interface DynamicToolOutputProps {
   toolName: string;
@@ -68,6 +69,7 @@ function getToolColors(name: string) {
 }
 
 export function DynamicToolOutput({ toolName, output, state }: DynamicToolOutputProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   // Loading state
   if (state === 'input-streaming' || state === 'input-available') {
     return (
@@ -118,13 +120,25 @@ export function DynamicToolOutput({ toolName, output, state }: DynamicToolOutput
             </div>
           </div>
         </div>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={cx(
+            "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
+            "bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600",
+            "text-zinc-700 dark:text-zinc-300"
+          )}
+        >
+          {isExpanded ? "Hide" : "Show"}
+        </button>
       </div>
 
-      <div className="bg-zinc-50 dark:bg-zinc-950 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700">
-        <pre className="text-sm text-zinc-700 dark:text-zinc-300 overflow-y-auto max-h-40 whitespace-pre-wrap break-words font-mono">
-          {JSON.stringify(output, null, 2)}
-        </pre>
-      </div>
+      {isExpanded && (
+        <div className="bg-zinc-50 dark:bg-zinc-950 rounded-xl p-4 border border-zinc-200 dark:border-zinc-700">
+          <pre className="text-sm text-zinc-700 dark:text-zinc-300 overflow-y-auto max-h-40 whitespace-pre-wrap break-words font-mono">
+            {JSON.stringify(output, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }

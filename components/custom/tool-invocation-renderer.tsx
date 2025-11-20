@@ -2,6 +2,7 @@
 
 import { DynamicToolOutput, DynamicToolError } from "./dynamic-tool-output";
 import { Weather } from "./weather";
+import { Checklist } from "./checklist";
 
 interface ToolInvocationRendererProps {
   toolName: string;
@@ -40,6 +41,9 @@ export function ToolInvocationRenderer({
     switch (toolName) {
       case 'getWeather':
         return <Weather weatherAtLocation={output} />;
+      
+      case 'CheckListTool':
+        return <Checklist checklistOutput={output} />;
       
       // Add more specialized tool renderers here as needed
       // case 'getStock':
