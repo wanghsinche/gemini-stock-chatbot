@@ -87,7 +87,7 @@ The AI Investment Advisor requires a few environment variables to be set up to f
 
 ### Advanced Configuration (Real-Time Financial Data)
 
-To unlock the full potential of the AI Investment Advisor, including real-time market analysis and data, you need to configure the MCP (Master Control Program) server endpoints.
+To unlock the full potential of the AI Investment Advisor, including real-time market analysis and data, you need to configure the MCP (Model Context Protocol) server endpoints.
 
 -   `MCP_SERVER_URL_PLUSE`: This is the endpoint for the **PlusE Finance MCP**, the core engine for financial data.
     -   **⭐ To get your endpoint, sign up for a free account at [PlusE Finance](https://plusefin.com).**
