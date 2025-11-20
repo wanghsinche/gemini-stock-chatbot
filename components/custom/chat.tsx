@@ -99,7 +99,7 @@ export function Chat({
           {messages.map((message, index) => {
             // Check if this is the last message and we're currently streaming
             const isLastMessage = index === messages.length - 1;
-            const isLoading = status === 'streaming' && isLastMessage && message.role === 'assistant';
+            const isLoading = (status==='submitted' ||status === 'streaming') && isLastMessage ;
             
             return (
               <PreviewMessage

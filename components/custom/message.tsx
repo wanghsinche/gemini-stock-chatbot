@@ -153,14 +153,14 @@ export const Message = ({
         })}
         
         {/* Show loading indicator if message is still being streamed */}
-        {isLoading && role === 'assistant' && (
+        {isLoading && (
           <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-sm mt-2">
             <div className="animate-pulse flex space-x-1">
               <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
               <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
               <div className="size-2 bg-zinc-400 dark:bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
-            <span>Thinking...</span>
+            <span>{role === 'assistant' ? ' Thinking...' : ' Sending...'}</span>
           </div>
         )}
       </div>
