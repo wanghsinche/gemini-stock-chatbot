@@ -1,101 +1,89 @@
 "use client";
 import cx from "classnames";
 import { useState } from "react";
+import { ChevronDown, Loader } from "lucide-react";
+
 interface DynamicToolOutputProps {
   toolName: string;
   output: any;
   state: "input-streaming" | "input-available" | "output-available" | "output-error";
 }
+
 interface DynamicToolErrorProps {
   toolName: string;
   errorText: string;
 }
-// Generate consistent colors based on tool name
-function getToolColors(name: string) {
-  const middleIndex = Math.floor(name.length / 2);
-  const charCode = name.charCodeAt(middleIndex) || 0;
-  // Use a predefined set of chart colors from the theme, plus some professional tones
-  const colorSchemes = [
+
+// Generates a consistent grayscale color scheme based on the tool name
+function getGrayscaleScheme(name: string) {
+  const schemes = [
     {
-      // Chart color 1 (e.g., a professional blue)
-      bg: "from-chart-1/10 to-chart-1/5",
-      border: "border-chart-1/20",
-      iconBg: "bg-chart-1/20",
-      iconText: "text-chart-1",
-      titleText: "text-chart-1/80",
-      headerText: "text-foreground",
+      bg: "bg-zinc-900",
+      border: "border-zinc-800",
+      iconBg: "bg-zinc-800",
+      iconText: "text-zinc-400",
+      titleText: "text-zinc-500",
+      headerText: "text-zinc-200",
+      contentBg: "bg-zinc-950",
     },
     {
-      // Chart color 2 (e.g., a calm green)
-      bg: "from-chart-2/10 to-chart-2/5",
-      border: "border-chart-2/20",
-      iconBg: "bg-chart-2/20",
-      iconText: "text-chart-2",
-      titleText: "text-chart-2/80",
-      headerText: "text-foreground",
+      bg: "bg-slate-900",
+      border: "border-slate-800",
+      iconBg: "bg-slate-800",
+      iconText: "text-slate-400",
+      titleText: "text-slate-500",
+      headerText: "text-slate-200",
+      contentBg: "bg-slate-950",
     },
     {
-      // Chart color 3 (e.g., a neutral teal)
-      bg: "from-chart-3/10 to-chart-3/5",
-      border: "border-chart-3/20",
-      iconBg: "bg-chart-3/20",
-      iconText: "text-chart-3",
-      titleText: "text-chart-3/80",
-      headerText: "text-foreground",
-    },
-    {
-      // Chart color 4 (e.g., a warm orange)
-      bg: "from-chart-4/10 to-chart-4/5",
-      border: "border-chart-4/20",
-      iconBg: "bg-chart-4/20",
-      iconText: "text-chart-4",
-      titleText: "text-chart-4/80",
-      headerText: "text-foreground",
-    },
-    {
-      // A professional purple/indigo
-      bg: "from-indigo-500/10 to-indigo-500/5",
-      border: "border-indigo-500/20",
-      iconBg: "bg-indigo-500/20",
-      iconText: "text-indigo-500",
-      titleText: "text-indigo-500/80",
-      headerText: "text-foreground",
+      bg: "bg-neutral-900",
+      border: "border-neutral-800",
+      iconBg: "bg-neutral-800",
+      iconText: "text-neutral-400",
+      titleText: "text-neutral-500",
+      headerText: "text-neutral-200",
+      contentBg: "bg-neutral-950",
     },
   ];
-  const schemeIndex = charCode % colorSchemes.length;
-  return colorSchemes[schemeIndex];
+
+  // Simple hash function to deterministically pick a scheme
+  const hashCode = Array.from(name).reduce(
+    (acc, char) => acc + char.charCodeAt(0),
+    0
+  );
+  const schemeIndex = hashCode % schemes.length;
+  return schemes[schemeIndex];
 }
+
 export function DynamicToolOutput({
   toolName,
   output,
   state,
 }: DynamicToolOutputProps) {
-  const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
+  const [isExpanded, setIsExpanded] = useState(false);
+
   if (state === "input-streaming" || state === "input-available") {
     return (
-      <div
-        className={cx(
-          "flex flex-col gap-4 rounded-2xl p-4",
-          "bg-muted/50 border border-border"
-        )}
-      >
+      <div className="flex flex-col gap-4 rounded-2xl p-4 bg-zinc-900 border border-zinc-800">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-3 items-center">
-            <div className="size-8 rounded-full bg-muted animate-pulse" />
-            <div className="text-md font-medium text-muted-foreground">
-              Executing {toolName}
+            <Loader className="size-5 text-zinc-500 animate-spin" />
+            <div className="text-md font-medium text-zinc-400">
+              Executing: <span className="font-semibold text-zinc-300">{toolName}</span>
             </div>
           </div>
         </div>
-        <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
       </div>
     );
   }
-  const colors = getToolColors(toolName);
+
+  const colors = getGrayscaleScheme(toolName);
+
   return (
     <div
+      data-scroll-ignore="true"
       className={cx(
-        "flex flex-col gap-4 rounded-2xl p-4 bg-gradient-to-br",
+        "flex flex-col gap-4 rounded-2xl p-4",
         colors.bg,
         colors.border,
         "border"
@@ -103,13 +91,8 @@ export function DynamicToolOutput({
     >
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-3 items-center">
-          <div
-            className={cx(
-              "size-10 rounded-full flex items-center justify-center",
-              colors.iconBg
-            )}
-          >
-            <div className={cx("text-lg font-bold", colors.iconText)}>
+          <div className={cx("size-8 rounded-full flex items-center justify-center", colors.iconBg)}>
+            <div className={cx("text-md font-bold", colors.iconText)}>
               {toolName.charAt(0).toUpperCase()}
             </div>
           </div>
@@ -117,38 +100,33 @@ export function DynamicToolOutput({
             <div className={cx("text-sm font-medium", colors.titleText)}>
               Tool Result
             </div>
-            <div className={cx("text-lg font-semibold", colors.headerText)}>
+            <div className={cx("text-md font-semibold", colors.headerText)}>
               {toolName}
             </div>
           </div>
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={cx(
-            "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
-            "bg-muted/50 hover:bg-muted",
-            "text-muted-foreground"
-          )}
+          className="p-1 rounded-full hover:bg-zinc-800 transition-colors"
         >
-          {isExpanded ? "Hide" : "Show"}
+          <ChevronDown
+            className={cx("size-4 text-zinc-400 transition-transform", {
+              "rotate-180": isExpanded,
+            })}
+          />
         </button>
       </div>
-      <div
-        className={cx(
-          "bg-card/50 rounded-xl p-4 border border-border",
-          {
-            hidden: !isExpanded,
-            block: isExpanded,
-          }
-        )}
-      >
-        <pre className="text-xs text-foreground/80 overflow-y-auto max-h-60 whitespace-pre-wrap break-words font-mono">
-          {JSON.stringify(output, null, 2)}
-        </pre>
-      </div>
+      {isExpanded && (
+        <div className={cx("rounded-xl p-4 border", colors.contentBg, colors.border)}>
+          <pre className="text-xs text-zinc-300 overflow-x-auto whitespace-pre-wrap break-words font-mono">
+            {JSON.stringify(output, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }
+
 export function DynamicToolError({
   toolName,
   errorText,
@@ -157,31 +135,26 @@ export function DynamicToolError({
     <div
       className={cx(
         "flex flex-col gap-4 rounded-2xl p-4",
-        "bg-destructive/10 border border-destructive/20"
+        "bg-red-900/20 border border-red-500/30"
       )}
     >
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-3 items-center">
-          <div
-            className={cx(
-              "size-10 rounded-full flex items-center justify-center",
-              "bg-destructive/20"
-            )}
-          >
-            <div className="text-destructive text-lg font-bold">!</div>
+          <div className="size-8 rounded-full flex items-center justify-center bg-red-900/30">
+            <div className="text-red-400 text-lg font-bold">!</div>
           </div>
           <div>
-            <div className="text-sm font-medium text-destructive/80">
+            <div className="text-sm font-medium text-red-500/80">
               Tool Error
             </div>
-            <div className="text-xl font-semibold text-destructive">
+            <div className="text-md font-semibold text-red-400">
               {toolName}
             </div>
           </div>
         </div>
       </div>
-      <div className="bg-destructive/10 rounded-xl p-4 border border-destructive/20">
-        <div className="text-sm text-destructive font-medium">{errorText}</div>
+      <div className="bg-red-900/20 rounded-xl p-4 border border-red-500/30">
+        <div className="text-sm text-red-400 font-medium">{errorText}</div>
       </div>
     </div>
   );

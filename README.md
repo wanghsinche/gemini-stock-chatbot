@@ -68,7 +68,7 @@ This template ships with Google Gemini `gemini-2.5-pro` models as the default. H
 
 You can deploy your own AI Investment Advisor to Vercel with one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot&env=AUTH_SECRET,GOOGLE_GENERATIVE_AI_API_KEY,MCP_SERVER_URL_PLUSE,MCP_SERVER_URL_TAVILY&envDescription=API%20Keys%20and%20Server%20URLs%20are%20required%20for%20the%20application%20to%20run.%20Learn%20more%20below.&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot%2Fblob%2Fmain%2FREADME.md%23configuration&demo-title=AI%20Investment%20Advisor&demo-description=An%20intelligent%20investment%20advisor%20powered%20by%20Google%20Gemini%2C%20combining%20legendary%20investment%20wisdom%20with%20real-time%20market%20data.&demo-url=https%3A%2F%2Fgemini.vercel.ai&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwanghsinche%2Fgemini-stock-chatbot&env=AUTH_SECRET,GOOGLE_GENERATIVE_AI_API_KEY,MCP_SERVER_URL_PLUSE,MCP_SERVER_URL_TAVILY&envDescription=API%20Keys%20and%20Server%20URLs%20are%20required%20for%20the%20application%20to%20run.%20Learn%20more%20below.&envLink=https%3A%2F%2Fgithub.com%2Fwanghsinche%2Fgemini-stock-chatbot%2Fblob%2Fmain%2FREADME.md%23configuration&demo-title=AI%20Investment%20Advisor&demo-description=An%20intelligent%20investment%20advisor%20powered%20by%20Google%20Gemini%2C%20combining%20legendary%20investment%20wisdom%20with%20real-time%20market%20data.&demo-url=https%3A%2F%2Fgemini-stock-chatbot.vercel.app&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
 
 ## Configuration
 
