@@ -6,10 +6,10 @@ import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AuthForm } from "@/components/custom/auth-form";
+import { AuthLayout } from "@/components/custom/auth-layout";
 import { SubmitButton } from "@/components/custom/submit-button";
 
 import { register, RegisterActionState } from "../actions";
-import { AuthLayout } from "@/components/custom/auth-layout";
 
 export default function Page() {
   const router = useRouter();

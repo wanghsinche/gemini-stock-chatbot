@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { auth, signOut } from "@/app/(auth)/auth";
+import pkg from '@/package.json';
 
 import { History } from "./history";
 import { GitIcon, SlashIcon } from "./icons";
@@ -14,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-import pkg from '@/package.json';
 
 export const Navbar = async () => {
   let session = await auth();

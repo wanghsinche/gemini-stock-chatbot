@@ -1,7 +1,7 @@
 "use client";
 import cx from "classnames";
-import { useState } from "react";
 import { CheckCircle } from "lucide-react";
+import { useState } from "react";
 
 interface ChecklistOutput {
   checklist: string;

@@ -1,7 +1,7 @@
 "use client";
 
-import { DynamicToolOutput, DynamicToolError } from "./dynamic-tool-output";
 import { Checklist } from "./checklist";
+import { DynamicToolOutput, DynamicToolError } from "./dynamic-tool-output";
 
 interface ToolInvocationRendererProps {
   toolName: string;
