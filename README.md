@@ -34,7 +34,7 @@
 - [NextAuth.js](https://nextauthjs/next-auth) for secure authentication
 
 ### 📊 Data Integration
-- [PlusE Finance MCP](https://plusefin.com) - Real-time financial data and analytics
+- [PlusE Finance MCP](https://plusefin.com) - The core engine for real-time financial data and analytics. 
 - [Tavily MCP](https://www.tavily.com) - Web intelligence for market news and sentiment
 - Multi-source validation for accuracy and reliability
 
@@ -68,13 +68,28 @@ This template ships with Google Gemini `gemini-2.5-pro` models as the default. H
 
 You can deploy your own AI Investment Advisor to Vercel with one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot&env=AUTH_SECRET,GOOGLE_GENERATIVE_AI_API_KEY&envDescription=Learn%20more%20about%20how%20to%20get%20the%20API%20Keys%20for%20the%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot%2Fblob%2Fmain%2F.env.example&demo-title=AI%20Investment%20Advisor&demo-description=An%20intelligent%20investment%20advisor%20powered%20by%20Google%20Gemini%2C%20combining%20legendary%20investment%20wisdom%20with%20real-time%20market%20data.&demo-url=https%3A%2F%2Fgemini.vercel.ai&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot&env=AUTH_SECRET,GOOGLE_GENERATIVE_AI_API_KEY,MCP_SERVER_URL_PLUSE,MCP_SERVER_URL_TAVILY&envDescription=API%20Keys%20and%20Server%20URLs%20are%20required%20for%20the%20application%20to%20run.%20Learn%20more%20below.&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fgemini-chatbot%2Fblob%2Fmain%2FREADME.md%23configuration&demo-title=AI%20Investment%20Advisor&demo-description=An%20intelligent%20investment%20advisor%20powered%20by%20Google%20Gemini%2C%20combining%20legendary%20investment%20wisdom%20with%20real-time%20market%20data.&demo-url=https%3A%2F%2Fgemini.vercel.ai&stores=[{%22type%22:%22postgres%22},{%22type%22:%22blob%22}])
+
+## Configuration
+
+The AI Investment Advisor requires a few environment variables to be set up to function correctly. See [.env.example](.env.example) for the full list.
+
+### Basic Configuration
+
+-   `GOOGLE_GENERATIVE_AI_API_KEY`: Your Google Gemini API key. You can get one from the [Vertex AI Dashboard](https://cloud.google.com/vertex-ai).
+-   `AUTH_SECRET`: A random secret used for authentication. You can generate one [here](https://generate-secret.vercel.app/32).
+
+### Advanced Configuration (Real-Time Financial Data)
+
+To unlock the full potential of the AI Investment Advisor, including real-time market analysis and data, you need to configure the MCP (Master Control Program) server endpoints.
+
+-   `MCP_SERVER_URL_PLUSE`: This is the endpoint for the **PlusE Finance MCP**, the core engine for financial data.
+    -   **⭐ To get your endpoint, sign up for a free account at [PlusE Finance](https://plusefin.com).**
+-   `MCP_SERVER_URL_TAVILY`: This is the endpoint for the Tavily API, used for web intelligence. You can get a key and endpoint from [Tavily](https://www.tavily.com).
 
 ## Running locally
 
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run the AI Investment Advisor. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+You will need to use the environment variables defined in [.env.example](.env.example) and explained in the [Configuration](#configuration) section. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a local `.env` file is all that is necessary.
 
 > Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various Google Cloud and authentication provider accounts.
 

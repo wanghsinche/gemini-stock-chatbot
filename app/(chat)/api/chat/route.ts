@@ -76,7 +76,7 @@ ANALYSIS APPROACH:
 
 Remember: Your goal is to provide practical, actionable investment guidance while maintaining intellectual honesty about limitations and uncertainties.`,
     messages: coreMessages,
-    stopWhen: [stepCountIs(10)],
+    stopWhen: [stepCountIs(50)],
     tools: {
       // Include MCP tools from the server
       ...mcpTools,

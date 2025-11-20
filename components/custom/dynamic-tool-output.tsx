@@ -12,7 +12,8 @@ interface DynamicToolErrorProps {
 }
 // Generate consistent colors based on tool name
 function getToolColors(name: string) {
-  const charCode = name.charCodeAt(0) || 0;
+  const middleIndex = Math.floor(name.length / 2);
+  const charCode = name.charCodeAt(middleIndex) || 0;
   // Use a predefined set of chart colors from the theme, plus some professional tones
   const colorSchemes = [
     {
@@ -81,7 +82,7 @@ export function DynamicToolOutput({
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-3 items-center">
             <div className="size-8 rounded-full bg-muted animate-pulse" />
-            <div className="text-lg font-medium text-muted-foreground">
+            <div className="text-md font-medium text-muted-foreground">
               Executing {toolName}
             </div>
           </div>

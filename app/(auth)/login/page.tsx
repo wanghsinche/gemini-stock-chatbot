@@ -10,6 +10,7 @@ import { SubmitButton } from "@/components/custom/submit-button";
 
 import { login, LoginActionState } from "../actions";
 
+import { AuthLayout } from "@/components/custom/auth-layout";
 export default function Page() {
   const router = useRouter();
 
@@ -38,7 +39,7 @@ export default function Page() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-background">
+    <AuthLayout>
       <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
@@ -60,6 +61,6 @@ export default function Page() {
           </p>
         </AuthForm>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

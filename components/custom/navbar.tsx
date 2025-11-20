@@ -4,7 +4,7 @@ import Link from "next/link";
 import { auth, signOut } from "@/app/(auth)/auth";
 
 import { History } from "./history";
-import { SlashIcon } from "./icons";
+import { GitIcon, SlashIcon } from "./icons";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "../ui/button";
 import {
@@ -13,6 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+
+import pkg from '@/package.json';
 
 export const Navbar = async () => {
   let session = await auth();
@@ -33,7 +35,16 @@ export const Navbar = async () => {
               <SlashIcon size={16} />
             </div>
             <div className="text-sm dark:text-zinc-300 truncate w-28 md:w-fit">
-              Next.js Stock AI
+            <Link
+                href={pkg.repository.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors flex items-center gap-1"
+              >
+                <GitIcon /> gemini-stock-chatbot
+
+              </Link>
+
             </div>
           </div>
         </div>
