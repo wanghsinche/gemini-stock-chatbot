@@ -7,7 +7,6 @@ import { BotIcon, UserIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { ToolInvocationRenderer } from "./tool-invocation-renderer";
-import { Weather } from "./weather";
 
 // AI SDK 5.0 message part types based on UIMessagePart
 export type MessagePart =
@@ -34,7 +33,7 @@ export const Message = ({
 }) => {
   return (
     <motion.div
-      className={`flex flex-row gap-4 px-4 w-full md:w-[500px] md:px-0 first-of-type:pt-20`}
+      className={`flex flex-row gap-4 px-4 w-full md:w-[820px] md:px-0 first-of-type:pt-20`}
       initial={{ y: 5, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
     >

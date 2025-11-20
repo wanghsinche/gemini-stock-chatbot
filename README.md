@@ -17,6 +17,12 @@
 </p>
 <br/>
 
+<br/>
+<p align="center">
+  <img alt="AI Investment Advisor" src="app/(chat)/screenshot.png">
+</p>
+<br/>
+
 ## Features
 
 ### 🎯 Investment Intelligence

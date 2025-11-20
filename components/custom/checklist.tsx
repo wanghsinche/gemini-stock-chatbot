@@ -37,16 +37,6 @@ export function Checklist({
     })
     .filter((item): item is { checked: boolean; text: string } => item !== null);
 
-  const handleClick = (index: number) => {
-    const newCheckedItems = new Set(checkedIndices);
-    if (newCheckedItems.has(index)) {
-      newCheckedItems.delete(index);
-    } else {
-      newCheckedItems.add(index);
-    }
-    setCheckedIndices(newCheckedItems);
-  };
-
   const completedCount = items.filter((item, index) => checkedIndices.has(index) || item.checked).length;
   const totalCount = items.length;
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
@@ -82,7 +72,6 @@ export function Checklist({
           return (
             <div
               key={index}
-              onClick={() => handleClick(index)}
               className={cx(
                 "flex flex-row items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer",
                 "bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50"
